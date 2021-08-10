@@ -1,75 +1,74 @@
-INSERT INTO voters
-  (first_name, last_name, email)
+INSERT INTO department
+  (name)
 VALUES
-  ('James', 'Fraser', 'jf@goldenbough.edu'),
-  ('Jack', 'London', 'jlondon@ualaska.edu'),
-  ('Robert', 'Bruce', 'rbruce@scotland.net'),
-  ('Peter', 'Greenaway', 'pgreenaway@postmodern.com'),
-  ('Derek', 'Jarman', 'djarman@prospectcottage.net'),
-  ('Paolo', 'Pasolini', 'ppasolini@salo.com'),
-  ('Heathcote', 'Williams', 'hwilliams@bafta.com'),
-  ('Sandy', 'Powell', 'spowell@oscars.com'),
-  ('Emil', 'Zola', 'ezola@requin.com'),
-  ('Sissy', 'Coalpits', 'scoalpits@greenaway.com'),
-  ('Antoinette', 'Capet', 'acapet@dontloseyourhead.com'),
-  ('Samuel', 'Delany', 'sdelany@dhalgren.com'),
-  ('Tony', 'Duvert', 'tduvert@frenchletters.edu'),
-  ('Dennis', 'Cooper', 'dcooper@georgemiles.com'),
-  ('Monica', 'Bellucci', 'mbell@irreverisble.net'),
-  ('Samuel', 'Johnson', 'sjohnson@boswell.com'),
-  ('John', 'Dryden', 'jdryden@restoration.net'),
-  ('Alexander', 'Pope', 'apope@cambridge.uk.edu'),
-  ('Lionel', 'Johnson', 'ljohnson@darkangel.com'),
-  ('Aubrey', 'Beardsley', 'abeardsely@wilde.net'),
-  ('Tulse', 'Luper', 'tluper@films.net'),
-  ('William', 'Morris', 'wmorris@victoriana.com'),
-  ('George', 'Shaw', 'gshaw@labor.uk'),
-  ('Arnold', 'Bennett', 'abennett@poemsgalore.com'),
-  ('Algernon', 'Blackwood', 'ablack@creepy.net'),
-  ('Rhoda', 'Broughton', 'rb@feminist.com'),
-  ('Hart', 'Crane', 'hcrane@schwesters.de'),
-  ('Vitorio', 'DeSica', 'vdesica@italiano.net'),
-  ('Wilkie', 'Collins', 'wcollins@madmonkton.com'),
-  ('Elizabeth', 'Gaskell', 'egaskell@pages.net'),
-  ('George', 'Sand', 'gsand@pride.com'),
-  ('Vernon', 'Lee', 'vlee@spooks.net'),
-  ('Arthur', 'Machen', 'amach@spirits.com'),
-  ('Frederick', 'Marryat', 'fmarry@boats.net'),
-  ('Harriet', 'Martineau', 'hmartineau@journalism.com'),
-  ('George', 'Meredith', 'gm@egoist.uk'),
-  ('Margaret', 'Oliphant', 'moli@victoriana.com'),
-  ('Anthony', 'Trollope', 'atrollope@barchester.com'),
-  ('Charlotte', 'Yonge', 'cyonge@newday.com'),
-  ('Horace', 'Walpole', 'hwal@otranto.net'),
-  ('Matthew', 'Lewis', 'mlewis@monk.com'),
-  ('William', 'Bedford', 'wbed@grandtour.net'),
-  ('Anne', 'Radcliffe', 'arad@udolpho.uk'),
-  ('Charles', 'Brown', 'cbrown@wieland.us'),
-  ('Eliza', 'Parsons', 'lizzie@fierce.net'),
-  ('Susan', 'Hill', 'shill@womaninblack.net'),
-  ('Sydney', 'Owenson', 'Sowen@think.net'),
-  ('Hubert', 'Crackanthorpe', 'hcrackan@goodletters.com'),
-  ('William', 'Carleton', 'wcarleton@literature.com'),
-  ('Gerald', 'Griffin', 'ggriff@lit.net');
+  ('Sales'),
+  ('Finance'),
+  ('Legal'),
+  ('Technical');
 
-INSERT INTO parties
-  (name, description)
+INSERT INTO role
+  (title, salary, department_id)
 VALUES
-  ('JS Juggernauts', 'The JS Juggernauts eat, breathe, and sleep JavaScript. They can build everything you could ever want in JS, including a new kitchen sink.'),
-  ('Heroes of HTML', 'Want to see a mock-up turn into an actual webpage in a matter of minutes? Well, the Heroes of HTML can get it done in a matter of seconds.'),
-  ('Git Gurus', 'Need to resolve a merge conflict? The Git Gurus have your back. Nobody knows Git like these folks do.');
+  ('Programmer',80000,1),
+  ('QC', 80000,1),
+  ('Planner', 80000,1),
+  ('Team Lead', 80000,2);
 
-INSERT INTO candidates
-  (first_name, last_name, party_id, industry_connected)
+INSERT INTO employee
+  (first_name, last_name, role_id,manager_id)
 VALUES
-  ('Ronald', 'Firbank', 1, 1),
-  ('Virginia', 'Woolf', 1, 1),
-  ('Piers', 'Gaveston', 1, 0),
-  ('Charles', 'LeRoi', 2, 1),
-  ('Katherine', 'Mansfield', 2, 1),
-  ('Dora', 'Carrington', 3, 0),
-  ('Edward', 'Bellamy', 3, 0),
-  ('Montague', 'Summers', 3, 1),
-  ('Octavia', 'Butler', 3, 1),
-  ('Unica', 'Zurn', NULL, 1);
+  ('James', 'Fraser', 1,NULL),
+  ('Jack', 'London', 2,NULL),
+  ('Robert', 'Bruce', 3,NULL),
+  ('Peter', 'Greenaway', 4,NULL),
+  ('Derek', 'Jarman', 4,NULL),
+  ('Paolo', 'Pasolini', 3,NULL),
+  ('Heathcote', 'Williams', 2,NULL),
+  ('Sandy', 'Powell', 1,NULL),
+  ('Emil', 'Zola', 2,NULL),
+  ('Sissy', 'Coalpits', 3,NULL),
+  ('Antoinette', 'Capet', 4,NULL),
+  ('Samuel', 'Delany', 1,NULL),
+  ('Tony', 'Duvert', 3,NULL),
+  ('Dennis', 'Cooper', 4,NULL),
+  ('Monica', 'Bellucci', 1,NULL),
+  ('Samuel', 'Johnson', 2,NULL),
+  ('John', 'Dryden', 3,NULL),
+  ('Alexander', 'Pope', 4,NULL),
+  ('Lionel', 'Johnson', 3,NULL),
+  ('Aubrey', 'Beardsley', 2,NULL),
+  ('Tulse', 'Luper', 1,NULL),
+  ('William', 'Morris', 1,NULL),
+  ('George', 'Shaw', 2,NULL),
+  ('Arnold', 'Bennett', 3,NULL),
+  ('Algernon', 'Blackwood', 4,NULL),
+  ('Rhoda', 'Broughton', 4,NULL),
+  ('Hart', 'Crane', 4,NULL),
+  ('Vitorio', 'DeSica', 4,NULL),
+  ('Wilkie', 'Collins', 4,NULL),
+  ('Elizabeth', 'Gaskell', 3,NULL),
+  ('George', 'Sand', 2,NULL),
+  ('Vernon', 'Lee', 1,NULL),
+  ('Arthur', 'Machen', 1,NULL),
+  ('Frederick', 'Marryat', 4,NULL),
+  ('Harriet', 'Martineau', 3,NULL),
+  ('George', 'Meredith', 3,NULL),
+  ('Margaret', 'Oliphant', 3,NULL),
+  ('Anthony', 'Trollope', 1,NULL),
+  ('Charlotte', 'Yonge', 3,NULL),
+  ('Horace', 'Walpole', 1,NULL),
+  ('Matthew', 'Lewis', 1,NULL),
+  ('William', 'Bedford', 2,NULL),
+  ('Anne', 'Radcliffe', 4,NULL),
+  ('Charles', 'Brown', 4,NULL),
+  ('Eliza', 'Parsons', 3,NULL),
+  ('Susan', 'Hill', 4,NULL),
+  ('Sydney', 'Owenson', 4,NULL),
+  ('Hubert', 'Crackanthorpe', 3,NULL),
+  ('William', 'Carleton', 2,NULL),
+  ('Gerald', 'Griffin', 1,NULL);
   
+  -- SELECT * FROM role;
+  -- SELECT * FROM department;
+  -- SELECT * FROM manager;
+  -- SELECT * FROM employee;
