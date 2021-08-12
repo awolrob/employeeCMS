@@ -94,19 +94,6 @@ Add Employee
       name: 'empRole',
       message: "What is the employee's role?",
       choices: roleArr
-      // choices: [
-      //   { name: 'None', value: "", },
-      //   { name: 'View All Employees', value: 'readEmp', },
-      //   { name: 'View All Employees By Department', value: 'readEmpDpt', },
-      //   { name: 'View All Employees By Manager', value: 'readEmpMrg', },
-      //   { name: 'Add Employee', value: 'create', },
-      //   { name: 'Remove Employee', value: 'delete', },
-      //   { name: 'Update Employee Role', value: 'updateEmpRole', },
-      //   { name: 'Update Employee Manager', value: 'updateEmpMrg', },
-      //   { name: 'View All Roles', value: 'readRoles', },
-      //   { name: 'Add Role', value: 'createRole', },
-      //   { name: 'Remove Role', value: 'deleteRole', }
-      // ]
     }
   ]);
 };
@@ -120,28 +107,13 @@ const fRole = function (item) {
 
 const createEmp = () => {
   db.promise().query(`SELECT id, title FROM role`).then((results) => {
-    //   if (err) {
-    //     console.log(err);
-    //   };
-    // console.log(results[0]);
     let roleArr = results[0].map(fRole);
     console.log(roleArr);
     promptCreateEmp(roleArr).then(empAnswers => {
       menuLoop();
     });
-    // })
   })
 };
-// function ask() {
-//   inquirer.prompt(questions).then((answers) => {
-//     output.push(answers.tvShow);
-//     if (answers.askAgain) {
-//       ask();
-//     } else {
-//       console.log('Your favorite TV Shows:', output.join(', '));
-//     }
-//   });
-// }
 
 // Menu function to loop through employee management actions
 const menuLoop = function () {
