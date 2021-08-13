@@ -37,7 +37,22 @@ const menuQuestions = [
 
 /* FUNCTIONS */
 function viewEmployees(orderBy) {
-  db.query(`SELECT e.id as ID, e.first_name as FIRST_NAME, e.last_name as LAST_NAME, role.title as TITLE, department.name as DEPARTMENT, role.salary as SALARY, CONCAT(m.last_name, ', ', m.first_name) AS MANAGER FROM employee e JOIN role ON e.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee m ON m.id = e.manager_id ORDER BY ${orderBy}`, function (err, results) {
+  const sql = `SELECT 
+    e.id as ID, 
+    e.first_name as FIRST_NAME, 
+    e.last_name as LAST_NAME, 
+    role.title as TITLE, 
+    department.name as DEPARTMENT, 
+    role.salary as SALARY, 
+    CONCAT(m.last_name, ', ', m.first_name) AS MANAGER 
+  FROM 
+    employee e 
+  JOIN role ON e.role_id = role.id 
+  JOIN department ON role.department_id = department.id 
+  LEFT JOIN employee m ON m.id = e.manager_id 
+  ORDER BY ${orderBy}`;
+  
+  db.query(sql, function (err, results) {
     if (err) {
       console.log(err);
     }
@@ -110,8 +125,19 @@ const createEmp = () => {
     let roleArr = results[0].map(fRole);
     console.log(roleArr);
     promptCreateEmp(roleArr).then(empAnswers => {
-      menuLoop();
-    });
+      const sql = `INSERT INTO employee 
+        (first_name, last_name, role_id) 
+      VALUES 
+        ("${empAnswers.first_name}","${empAnswers.last_name}",${empAnswers.empRole})`;
+
+      db.query(sql, function (err, results) {
+        if (err) {
+          console.log(err);
+        }
+        console.table(results);
+        menuLoop();
+      });
+    })
   })
 };
 
@@ -123,15 +149,12 @@ const menuLoop = function () {
       switch (mainAnswers.mainAction) {
         case "readEmp":
           viewEmployees("e.id");
-
           break;
         case "readEmpDpt":
           viewEmployees("department.name");
-
           break;
         case "readEmpMrg":
           viewEmployees("e.manager_id");
-
           break;
         case "create":
           createEmp();
@@ -158,10 +181,9 @@ const menuLoop = function () {
           break;
         case "end":
           console.log('good bye');
-          process.abort;
+          db.end();
       };
     });
-  return false;
 };
 /* END FUNCTIONS */
 
@@ -182,4 +204,5 @@ console.log("|                                                    |");
 console.log("'----------------------------------------------------'");
 
 // Main logic - loop until end is selected
+db.connect();
 menuLoop();
