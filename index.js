@@ -27,15 +27,21 @@ const menuQuestions = [
       { name: 'View All Roles', value: 'readRoles', },
       { name: 'Add Role', value: 'createRole', },
       { name: 'Remove Role', value: 'deleteRole', },
-      new inquirer.Separator('*********'),
+      new inquirer.Separator(),
       { name: 'End', value: 'end', },
-      new inquirer.Separator('*********')
+      new inquirer.Separator(),
+      new inquirer.Separator(" ")
     ]
   }
 ];
 /* END VARIABLES */
 
 /* FUNCTIONS */
+//validate for Role Salary
+function isNumeric(value) {
+  return /^-?\d+$/.test(value);
+}
+
 //Map employee Array from SQL for use in Inquire list array
 const fEmp = function (item) {
   var newArr = {};
@@ -46,9 +52,16 @@ const fEmp = function (item) {
 
 //Map Role Array from SQL for use in Inquire list array
 const fRole = function (item) {
-  console.log(item);
   var newArr = {};
   newArr.name = item.title;
+  newArr.value = item.id;
+  return newArr;
+};
+
+//Map department Array from SQL for use in Inquire list array
+const fDept = function (item) {
+  var newArr = {};
+  newArr.name = item.name;
   newArr.value = item.id;
   return newArr;
 };
@@ -79,7 +92,13 @@ function viewEmployees(orderBy) {
 };
 
 function viewRoles() {
-  db.query(`SELECT * FROM role`, function (err, results) {
+  const sql = `SELECT 
+    title AS ROLE, 
+    salary AS SALARY, 
+    department.name AS DEPARTMENT 
+  FROM role 
+  JOIN department ON department_id = department.id`
+  db.query(sql, function (err, results) {
     if (err) {
       console.log(err);
     }
@@ -240,7 +259,6 @@ const updateEmpRole = () => {
 
       //Prompt User for New Employee Data, Insert into SQL
       promptEmpRole(roleArr, empArr).then(empAnswers => {
-        // console.log(empAnswers)
         const sql = `UPDATE employee 
             SET role_id = ${empAnswers.empRole}
             WHERE id = ${empAnswers.empList}`;
@@ -262,11 +280,11 @@ const updateEmpMrg = () => {
 
   // Create employee array using Array.Map
   const sql = `SELECT id, CONCAT(first_name, ' ', last_name) AS name FROM employee`;
-  
+
   // Use employee array from SQL to prompt for manager change
   db.promise().query(sql).then((results) => {
     let empArr = results[0].map(fEmp);
-    
+
     (async () => {
       const ans1 = await inquirer.prompt([
         {
@@ -284,7 +302,8 @@ const updateEmpMrg = () => {
           choices: empArr,
         },
       ]);
-      // return { ...ans1, ...ans2 };
+
+      //Update selected employee manager ID
       const sql = `UPDATE employee 
           SET manager_id = ${ans2.empMgr}
           WHERE id = ${ans1.empList}`;
@@ -296,11 +315,112 @@ const updateEmpMrg = () => {
         console.table(results);
         menuLoop();
       });
+    })()
+  })
+};
 
+//Create new employee
+const createRole = () => {
+  //New Role Prompt user for data
+  const promptCreateRole = (deptArr) => {
+    console.log(`
+  ========
+  Add Role
+  ========
+  `);
+    return inquirer.prompt([
+      {
+        type: 'input',
+        name: 'title',
+        message: "What is the name of the new employee role?",
+        validate: newRole => {
+          if (newRole) {
+            return true;
+          } else {
+            console.log("Please enter the name of the new employee role");
+            return false;
+          }
+        },
+      },
+      {
+        type: 'input',
+        name: 'salary',
+        message: "What is the salary for the new employee role?",
+        validate: salary => {
+          if (isNumeric(salary)) {
+            return true;
+          } else {
+            console.log("Please enter a numeric salary");
+            return false;
+          }
+        },
+      },
+      {
+        type: 'list',
+        name: 'deptName',
+        message: "Select a department for this role?",
+        choices: deptArr
+      }
+    ]);
+  };
+
+  db.promise().query(`SELECT id, name FROM department`).then((results) => {
+    //Pull department Index from SQL using Array.Map
+    let deptArr = results[0].map(fDept);
+
+    promptCreateRole(deptArr).then(empAnswers => {
+      const sql = `INSERT INTO role 
+        (title, salary,department_id) 
+      VALUES 
+        ("${empAnswers.title}",${parseInt(empAnswers.salary)}, ${empAnswers.deptName})`;
+
+      db.query(sql, function (err, results) {
+        if (err) {
+          console.log(err);
+        }
+        console.table(results);
+        menuLoop();
+      });
     })
-      ()
-      .then(console.log)
-      .catch(console.error);
+  })
+};
+
+const deleteRole = () => {
+  //List roles to select one to delete
+  const promptDeleteRole = (roleArr) => {
+    console.log(`
+  =====================
+  Select Role To Remove
+  =====================
+  `);
+    return inquirer.prompt([
+      {
+        type: 'list',
+        name: 'roleList',
+        message: "Which role do you want to remove?",
+        choices: roleArr
+      }
+    ]);
+  };
+
+  const sql = `SELECT id, title FROM role`;
+  db.promise().query(sql).then((results) => {
+    //Pull Role Index from SQL using Array.Map
+    let roleArr = results[0].map(fRole);
+
+    //Prompt User for New Employee Data, Insert into SQL
+    promptDeleteRole(roleArr).then(empAnswers => {
+      
+      const sql = `DELETE FROM role WHERE id = ${empAnswers.roleList}`;
+
+      db.query(sql, function (err, results) {
+        if (err) {
+          console.log(err);
+        }
+        console.table(results);
+        menuLoop();
+      });
+    })
   })
 };
 
@@ -308,7 +428,7 @@ const updateEmpMrg = () => {
 const menuLoop = function () {
   inquirer.prompt(menuQuestions)
     .then((mainAnswers) => {
-      console.log(mainAnswers);
+      console.log(" ");
       switch (mainAnswers.mainAction) {
         case "readEmp":
           viewEmployees("e.id");
@@ -335,10 +455,10 @@ const menuLoop = function () {
           viewRoles();
           break;
         case "createRole":
-
+          createRole();
           break;
         case "deleteRole":
-
+          deleteRole();
           break;
         case "end":
           console.log('goodbye');
