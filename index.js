@@ -37,6 +37,8 @@ const menuQuestions = [
 /* END VARIABLES */
 
 /* FUNCTIONS */
+
+/* UTILITY FUNCTIONS*/
 //validate for Role Salary
 function isNumeric(value) {
   return /^-?\d+$/.test(value);
@@ -66,6 +68,8 @@ const fDept = function (item) {
   return newArr;
 };
 
+/* MAIN LOGIC FUNCTIONS */
+//List all employees
 function viewEmployees(orderBy) {
   const sql = `SELECT 
     e.id as ID, 
@@ -87,10 +91,12 @@ function viewEmployees(orderBy) {
       console.log(err);
     }
     console.table(results);
+    console.log("");
     menuLoop();
   });
 };
 
+//List all roles
 function viewRoles() {
   const sql = `SELECT 
     title AS ROLE, 
@@ -103,6 +109,7 @@ function viewRoles() {
       console.log(err);
     }
     console.table(results);
+    console.log("");
     menuLoop();
   });
 };
@@ -175,7 +182,8 @@ const createEmp = () => {
           if (err) {
             console.log(err);
           }
-          console.table(results);
+          console.log(`Employee ${empAnswers.first_name} ${empAnswers.last_name} Created`);
+          console.log("");
           menuLoop();
         });
       })
@@ -183,7 +191,7 @@ const createEmp = () => {
   })
 };
 
-//Remove employee from SQL
+//Remove employee from db
 const deleteEmp = () => {
   //List employees to select one to delete
   const promptDeleteEmp = (empArr) => {
@@ -209,14 +217,15 @@ const deleteEmp = () => {
 
     //Prompt User for New Employee Data, Insert into SQL
     promptDeleteEmp(empArr).then(empAnswers => {
-      console.log(empAnswers)
+
       const sql = `DELETE FROM employee WHERE id = ${empAnswers.empList}`;
 
       db.query(sql, function (err, results) {
         if (err) {
           console.log(err);
         }
-        console.table(results);
+        console.log("Employee Deleted");
+        console.log("");
         menuLoop();
       });
     })
@@ -225,7 +234,7 @@ const deleteEmp = () => {
 
 //Update employee Role
 const updateEmpRole = () => {
-  //New Employee Prompt for data
+  //Prompt for user data
   const promptEmpRole = (roleArr, empArr) => {
     console.log(`
   ====================
@@ -250,14 +259,13 @@ const updateEmpRole = () => {
 
   const sql = `SELECT id, CONCAT(first_name, ' ', last_name) AS name FROM employee`;
   db.promise().query(sql).then((results) => {
-    //Pull Role Index from SQL using Array.Map
+    //Pull employee Index from SQL using Array.Map
     let empArr = results[0].map(fEmp);
 
     db.promise().query(`SELECT id, title FROM role`).then((results) => {
       //Pull Role Index from SQL using Array.Map
       let roleArr = results[0].map(fRole);
 
-      //Prompt User for New Employee Data, Insert into SQL
       promptEmpRole(roleArr, empArr).then(empAnswers => {
         const sql = `UPDATE employee 
             SET role_id = ${empAnswers.empRole}
@@ -267,7 +275,8 @@ const updateEmpRole = () => {
           if (err) {
             console.log(err);
           }
-          console.table(results);
+          console.log("Employee Role Update");
+          console.log("");
           menuLoop();
         });
       })
@@ -312,14 +321,15 @@ const updateEmpMrg = () => {
         if (err) {
           console.log(err);
         }
-        console.table(results);
+        console.log("Employee Manager Updated");
+        console.log("");
         menuLoop();
       });
     })()
   })
 };
 
-//Create new employee
+//Create new employee role
 const createRole = () => {
   //New Role Prompt user for data
   const promptCreateRole = (deptArr) => {
@@ -378,13 +388,15 @@ const createRole = () => {
         if (err) {
           console.log(err);
         }
-        console.table(results);
+        console.log("Role Created");
+        console.log("");
         menuLoop();
       });
     })
   })
 };
 
+//delete employee role
 const deleteRole = () => {
   //List roles to select one to delete
   const promptDeleteRole = (roleArr) => {
@@ -408,16 +420,16 @@ const deleteRole = () => {
     //Pull Role Index from SQL using Array.Map
     let roleArr = results[0].map(fRole);
 
-    //Prompt User for New Employee Data, Insert into SQL
     promptDeleteRole(roleArr).then(empAnswers => {
-      
+
       const sql = `DELETE FROM role WHERE id = ${empAnswers.roleList}`;
 
       db.query(sql, function (err, results) {
         if (err) {
           console.log(err);
         }
-        console.table(results);
+        console.log("Role Deleted");
+        console.log("");
         menuLoop();
       });
     })
