@@ -36,7 +36,7 @@ const menuQuestions = [
 /* END VARIABLES */
 
 /* FUNCTIONS */
-//Map employee Array from SQL for use in Inquire list array to select employee to delete
+//Map employee Array from SQL for use in Inquire list array
 const fEmp = function (item) {
   var newArr = {};
   newArr.name = item.name;
@@ -209,9 +209,9 @@ const updateEmpRole = () => {
   //New Employee Prompt for data
   const promptEmpRole = (roleArr, empArr) => {
     console.log(`
-  =======================
-  To change Employee Role
-  =======================
+  ====================
+  Change Employee Role
+  ====================
   `);
     return inquirer.prompt([
       {
@@ -240,7 +240,7 @@ const updateEmpRole = () => {
 
       //Prompt User for New Employee Data, Insert into SQL
       promptEmpRole(roleArr, empArr).then(empAnswers => {
-        console.log(empAnswers)
+        // console.log(empAnswers)
         const sql = `UPDATE employee 
             SET role_id = ${empAnswers.empRole}
             WHERE id = ${empAnswers.empList}`;
@@ -254,6 +254,53 @@ const updateEmpRole = () => {
         });
       })
     })
+  })
+};
+
+//Update employee manager
+const updateEmpMrg = () => {
+
+  // Create employee array using Array.Map
+  const sql = `SELECT id, CONCAT(first_name, ' ', last_name) AS name FROM employee`;
+  
+  // Use employee array from SQL to prompt for manager change
+  db.promise().query(sql).then((results) => {
+    let empArr = results[0].map(fEmp);
+    
+    (async () => {
+      const ans1 = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'empList',
+          message: "Which employee's manager do you want to update?",
+          choices: empArr,
+        },
+      ]);
+      const ans2 = await inquirer.prompt([
+        {
+          type: "list",
+          name: "empMgr",
+          message: `Which employee do you want to set as the manager for the selected?`,
+          choices: empArr,
+        },
+      ]);
+      // return { ...ans1, ...ans2 };
+      const sql = `UPDATE employee 
+          SET manager_id = ${ans2.empMgr}
+          WHERE id = ${ans1.empList}`;
+
+      db.query(sql, function (err, results) {
+        if (err) {
+          console.log(err);
+        }
+        console.table(results);
+        menuLoop();
+      });
+
+    })
+      ()
+      .then(console.log)
+      .catch(console.error);
   })
 };
 
@@ -282,11 +329,10 @@ const menuLoop = function () {
           updateEmpRole();
           break;
         case "updateEmpMrg":
-
+          updateEmpMrg();
           break;
         case "readRoles":
           viewRoles();
-
           break;
         case "createRole":
 
@@ -295,7 +341,7 @@ const menuLoop = function () {
 
           break;
         case "end":
-          console.log('good bye');
+          console.log('goodbye');
           db.end();
       };
     });
