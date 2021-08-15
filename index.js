@@ -20,13 +20,19 @@ const menuQuestions = [
       { name: 'View All Employees', value: 'readEmp', },
       { name: 'View All Employees By Department', value: 'readEmpDpt', },
       { name: 'View All Employees By Manager', value: 'readEmpMrg', },
+      new inquirer.Separator(),
       { name: 'Add Employee', value: 'create', },
       { name: 'Remove Employee', value: 'delete', },
       { name: 'Update Employee Role', value: 'updateEmpRole', },
       { name: 'Update Employee Manager', value: 'updateEmpMrg', },
+      new inquirer.Separator(),
       { name: 'View All Roles', value: 'readRoles', },
       { name: 'Add Role', value: 'createRole', },
       { name: 'Remove Role', value: 'deleteRole', },
+      new inquirer.Separator(),
+      { name: 'View Departments', value: 'readDept', },
+      { name: 'Add Department', value: 'createDept', },
+      new inquirer.Separator(),
       new inquirer.Separator(),
       { name: 'End', value: 'end', },
       new inquirer.Separator(),
@@ -99,11 +105,28 @@ function viewEmployees(orderBy) {
 //List all roles
 function viewRoles() {
   const sql = `SELECT 
-    title AS ROLE, 
+    title AS "JOB TITLE", 
+    role.id AS ID,
     salary AS SALARY, 
     department.name AS DEPARTMENT 
   FROM role 
   JOIN department ON department_id = department.id`
+  db.query(sql, function (err, results) {
+    if (err) {
+      console.log(err);
+    }
+    console.table(results);
+    console.log("");
+    menuLoop();
+  });
+};
+
+//List all departments
+function readDept() {
+  const sql = `SELECT 
+    id AS ID,
+    name AS DEPARTMENT 
+    FROM department`
   db.query(sql, function (err, results) {
     if (err) {
       console.log(err);
@@ -396,6 +419,49 @@ const createRole = () => {
   })
 };
 
+//Create new department
+const createDept = () => {
+  //New Role Prompt user for data
+  const promptCreateDept = (deptArr) => {
+    console.log(`
+  ==============
+  Add Department
+  ==============
+  `);
+    return inquirer.prompt([
+      {
+        type: 'input',
+        name: 'name',
+        message: "What is the name of the new department?",
+        validate: newDept => {
+          if (newDept) {
+            return true;
+          } else {
+            console.log("Please enter the name of the new department");
+            return false;
+          }
+        },
+      }
+    ]);
+  };
+
+  promptCreateDept().then(empAnswers => {
+    const sql = `INSERT INTO department 
+      (name) 
+      VALUES 
+        ("${empAnswers.name}")`;
+
+    db.query(sql, function (err, results) {
+      if (err) {
+        console.log(err);
+      }
+      console.log("Department Created");
+      console.log("");
+      menuLoop();
+    });
+  });
+};
+
 //delete employee role
 const deleteRole = () => {
   //List roles to select one to delete
@@ -471,6 +537,12 @@ const menuLoop = function () {
           break;
         case "deleteRole":
           deleteRole();
+          break;
+        case "readDept":
+          readDept();
+          break;
+        case "createDept":
+          createDept();
           break;
         case "end":
           console.log('goodbye');
