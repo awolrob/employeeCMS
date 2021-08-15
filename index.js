@@ -32,6 +32,7 @@ const menuQuestions = [
       new inquirer.Separator(),
       { name: 'View Departments', value: 'readDept', },
       { name: 'Add Department', value: 'createDept', },
+      { name: 'View Total Utilized Budget', value: 'sumDeptBudget', },
       new inquirer.Separator(),
       new inquirer.Separator(),
       { name: 'End', value: 'end', },
@@ -127,6 +128,28 @@ function readDept() {
     id AS ID,
     name AS DEPARTMENT 
     FROM department`
+  db.query(sql, function (err, results) {
+    if (err) {
+      console.log(err);
+    }
+    console.table(results);
+    console.log("");
+    menuLoop();
+  });
+};
+
+//List departments budgets
+function sumDeptBudget() {
+  const sql = `SELECT 
+     department.name as DEPARTMENT, 
+     role.salary as "SET SALARY", 
+     SUM(role.salary) as "TOTAL SALARY"
+  FROM 
+    employee e 
+  JOIN role ON e.role_id = role.id 
+  JOIN department ON role.department_id = department.id 
+  LEFT JOIN employee m ON m.id = e.manager_id 
+  GROUP BY department.name ;`
   db.query(sql, function (err, results) {
     if (err) {
       console.log(err);
@@ -543,6 +566,9 @@ const menuLoop = function () {
           break;
         case "createDept":
           createDept();
+          break;
+        case "sumDeptBudget":
+          sumDeptBudget();
           break;
         case "end":
           console.log('goodbye');
